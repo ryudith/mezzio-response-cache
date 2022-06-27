@@ -1,0 +1,32 @@
+{
+    "name": "ryudith/mezzio-response-cache",
+    "description": "Cache response based URL route key for Mezzio.",
+    "type": "library",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Ryudith"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Ryudith\\MezzioResponseCache\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ryudith\\MezzioResponseCache\\Test\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^8.0",
+        "psr/http-server-middleware": "^1.0",
+        "psr/container": "^1.0",
+        "psr/cache": "^3.0",
+        "laminas/laminas-diactoros": "^2.7"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5.11",
+        "guzzlehttp/guzzle": "^7.4"
+    }
+}
