@@ -182,4 +182,20 @@ class CacheHandler implements CacheHandlerInterface
         $this->setKey($key);
         return $this->storage->set($this->key, $content, $duration);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function deleteCache(string $key): bool
+    {
+        return $this->storage->delete($key);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function clearCache(): bool
+    {
+        return $this->storage->clear();
+    }
 }

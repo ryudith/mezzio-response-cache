@@ -60,4 +60,19 @@ interface StorageInterface
      * @return ?array Assoc array current cache metadata.
      */
     public function getCurrentMetadata () : ?array;
+
+    /**
+     * Delete cache metadata and content file.
+     * 
+     * @param string $key Cache key (will be file name).
+     * @return bool Process result delete cache.
+     */
+    public function delete(string $key): bool;
+
+    /**
+     * Clear all caches by delete metadata and content files.
+     * 
+     * @return bool Process result clear cache.
+     */
+    public function clear(): bool;
 }

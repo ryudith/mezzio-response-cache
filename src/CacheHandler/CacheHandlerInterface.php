@@ -93,4 +93,19 @@ interface CacheHandlerInterface
      * @return bool Set cache result.
      */
     public function setContent (mixed $content, ?string $key = null, ?int $duration = null) : bool;
+
+    /**
+     * Delete individual cache based $key parameter.
+     * 
+     * @param string $key Cache key to delete.
+     * @return bool Delete process result.
+     */
+    public function deleteCache (string $key) : bool;
+
+    /**
+     * Clear all available caches.
+     * 
+     * @return bool Clear process result.
+     */
+    public function clearCache () : bool;
 }

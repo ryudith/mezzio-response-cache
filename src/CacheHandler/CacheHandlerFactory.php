@@ -5,9 +5,10 @@
  */
 declare(strict_types=1);
 
-namespace Ryudith\MezzioResponseCache;
+namespace Ryudith\MezzioResponseCache\CacheHandler;
 
 use Psr\Container\ContainerInterface;
+use Ryudith\MezzioResponseCache\Storage\FileSystemCacheHandler;
 
 /**
  * Factory for CacheHandler class.
@@ -23,7 +24,7 @@ class CacheHandlerFactory
     public function __invoke (ContainerInterface $container) : CacheHandler
     {
         $config = [
-            'cache_storage_handler_class' => Storage\FileSystemCacheHandler::class,
+            'cache_storage_handler_class' => FileSystemCacheHandler::class,
             'exclude_ip_from_cache' => [],
             'exlcude_path_from_cache' => [],
         ];

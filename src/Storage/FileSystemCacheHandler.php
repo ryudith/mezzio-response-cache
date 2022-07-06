@@ -21,7 +21,7 @@ use Psr\SimpleCache\CacheInterface;
  * 3. ttl      : Seconds time to live.
  * 4. deleteAt : Time cache will delete (unixtime).
  */
-class FileSystemCacheHandler implements StorageInterface, CacheInterface
+class FileSystemCacheHandler implements CacheInterface, StorageInterface
 {
     /**
      * public class constant.
@@ -63,7 +63,7 @@ class FileSystemCacheHandler implements StorageInterface, CacheInterface
     /**
      * {@inheritdoc}
      */
-    public function get(string $key, mixed $default = null): mixed
+    public function get($key, $default = null): mixed
     {
         if (! $this->has($key)) 
         {
@@ -76,7 +76,7 @@ class FileSystemCacheHandler implements StorageInterface, CacheInterface
     /**
      * {@inheritdoc}
      */
-    public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
+    public function set($key, $value, $ttl = null): bool
     {
         if ($ttl == null) 
         {
@@ -117,10 +117,7 @@ class FileSystemCacheHandler implements StorageInterface, CacheInterface
     }
 
     /**
-     * Delete cache metadata and content file.
-     * 
-     * @param string $key Cache key (will be file name).
-     * @return bool Process result delete cache.
+     * {@inheritDoc}
      */
     public function delete($key): bool
     {
@@ -149,9 +146,7 @@ class FileSystemCacheHandler implements StorageInterface, CacheInterface
     }
 
     /**
-     * Clear all caches by delete metadata and content files.
-     * 
-     * @return bool Process result clear cache.
+     * {@inheritDoc}
      */
     public function clear(): bool
     {
@@ -241,7 +236,7 @@ class FileSystemCacheHandler implements StorageInterface, CacheInterface
     /**
      * {@inheritdoc}
      */
-    public function has(string $key): bool
+    public function has($key): bool
     {
         if ($key !== $this->currentKey)
         {

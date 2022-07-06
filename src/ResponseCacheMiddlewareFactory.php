@@ -5,7 +5,7 @@
  */
 declare(strict_types=1);
 
-namespace Ryudith\MezzioResponseCache\CacheHandler;
+namespace Ryudith\MezzioResponseCache;
 
 use Psr\Container\ContainerInterface;
 use Ryudith\MezzioResponseCache\ResponseCacheMiddleware;
