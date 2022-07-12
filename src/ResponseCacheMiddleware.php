@@ -45,8 +45,6 @@ class ResponseCacheMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $response = $handler->handle($request);
-
         $uriPath = $request->getUri()->getPath();
         $cacheControl = 'max-age='.$this->cacheHandler->getTtl().', must-revalidate, private';
         $this->cacheHandler
@@ -67,12 +65,15 @@ class ResponseCacheMiddleware implements MiddlewareInterface
 
                 return new HtmlResponse($content);
             }
-            
+
+            $response = $handler->handle($request);
             $content = (string) $response->getBody();
             $this->cacheHandler->setContent($content);
 
             return $response->withHeader('Cache-Control', $cacheControl);
         }
+
+        $response = $handler->handle($request);
         
         return $response;
     }
