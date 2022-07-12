@@ -24,9 +24,18 @@ use Psr\SimpleCache\CacheInterface;
 class FileSystemCacheHandler implements CacheInterface, StorageInterface
 {
     /**
-     * public class constant.
+     * Data separator for metadata cache.
+     * 
+     * @var string SEPARATOR_DATA
      */
     public const SEPARATOR_DATA = '||';
+
+    /**
+     * Default cache file name, to prevent on accident delete other file.
+     * 
+     * @var string CACHE_FILE_EXT
+     */
+    public const CACHE_FILE_EXT = '.cache';
 
     /**
      * Current cache key, so no need read metadata again if key still same.
@@ -70,7 +79,7 @@ class FileSystemCacheHandler implements CacheInterface, StorageInterface
             return $default;
         }
 
-        return \file_get_contents($this->config['cache_content_location'].$key);
+        return \file_get_contents($this->config['cache_content_location'].$key.self::CACHE_FILE_EXT);
     }
 
     /**
@@ -82,8 +91,11 @@ class FileSystemCacheHandler implements CacheInterface, StorageInterface
         {
             $ttl = $this->config['default_ttl'];
         }
+        else if ($ttl instanceof \DateInterval)
+        {
+            $ttl = $this->secondDateInterval($ttl);
+        }
 
-        $ttl = $ttl instanceof \DateInterval ? $this->secondDateInterval($ttl) : $ttl;
         if ($ttl < 1)
         {
             return true;
@@ -101,16 +113,18 @@ class FileSystemCacheHandler implements CacheInterface, StorageInterface
             $now.self::SEPARATOR_DATA.
             $ttl.self::SEPARATOR_DATA.
             ($now + $ttl);
-        $isMetadataSaved = \file_put_contents($metadataDir.$key, $metadata);
+        $cacheMetadataFileName = $metadataDir.$key.self::CACHE_FILE_EXT;
+        $cacheContentFileName = $contentDir.$key.self::CACHE_FILE_EXT;
+        $isMetadataSaved = \file_put_contents($cacheMetadataFileName, $metadata);
         $isContentSaved = false;
         if ($isMetadataSaved)
         {
-            $isContentSaved = \file_put_contents($contentDir.$key, $value);
+            $isContentSaved = \file_put_contents($cacheContentFileName, $value);
         }
 
         if (! $isContentSaved)
         {
-            \unlink($metadataDir.$key);
+            \unlink($cacheMetadataFileName);
         }
         
         return $isMetadataSaved && $isContentSaved;
@@ -121,8 +135,8 @@ class FileSystemCacheHandler implements CacheInterface, StorageInterface
      */
     public function delete($key): bool
     {
-        $metadata = $this->config['cache_metadata_location'].$key;
-        $content = $this->config['cache_content_location'].$key;
+        $metadata = $this->config['cache_metadata_location'].$key.self::CACHE_FILE_EXT;
+        $content = $this->config['cache_content_location'].$key.self::CACHE_FILE_EXT;
         $isMetadataExists = \file_exists($metadata);
         $isContentExists = \file_exists($content);
         if (! $isMetadataExists && ! $isContentExists)
@@ -156,12 +170,15 @@ class FileSystemCacheHandler implements CacheInterface, StorageInterface
         while ($metadataFiles->valid())
         {
             $fileName = $metadataFiles->getFilename();
-            if ($fileName === '.' || $fileName === '..')
+            $fileExt = '.'.$metadataFiles->getExtension();
+            if ($fileName === '.' || $fileName === '..' || $fileExt !== self::CACHE_FILE_EXT)
             {
+                $metadataFiles->next();
                 continue;
             }
 
             \unlink($metadataDir.$fileName);
+            $metadataFiles->next();
         }
 
         // delete all content cache files.
@@ -170,12 +187,15 @@ class FileSystemCacheHandler implements CacheInterface, StorageInterface
         while ($contentFiles->valid())
         {
             $fileName = $contentFiles->getFilename();
-            if ($fileName === '.' || $fileName === '..')
+            $fileExt = '.'.$metadataFiles->getExtension();
+            if ($fileName === '.' || $fileName === '..' || $fileExt !== self::CACHE_FILE_EXT)
             {
+                $contentFiles->next();
                 continue;
             }
 
             \unlink($contentDir.$fileName);
+            $contentFiles->next();
         }
 
         return true;
@@ -269,7 +289,7 @@ class FileSystemCacheHandler implements CacheInterface, StorageInterface
      */
     public function getMetadata (string $key) : ?array
     {
-        $metadataFilename = $this->config['cache_metadata_location'].$key;
+        $metadataFilename = $this->config['cache_metadata_location'].$key.self::CACHE_FILE_EXT;
         if (! \file_exists($metadataFilename)) 
         {
             return null;
