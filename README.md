@@ -191,6 +191,6 @@ Next you can access simple web helper from `http://localhost:8080/cacheresponse/
 
 ## Documentation
 
-[API Documentation](https://github.com/ryudith/mezzio-response-cache/tree/master/docs/api/classes)
+[API Documentation](https://ryudith.github.io/mezzio-response-cache/api/index.html)
 
 [Issues or Questions](https://github.com/ryudith/mezzio-response-cache/issues)
